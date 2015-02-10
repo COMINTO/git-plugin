@@ -630,6 +630,12 @@ public class GitSCMTest extends AbstractGitTestCase {
 
         rule.assertLogContains(checkoutString(project, GitSCM.GIT_COMMIT), build1);
 
+        assertEquals("master", getEnvVars(project).get(GitSCM.GIT_BRANCH_SHORT));
+        rule.assertLogContains(getEnvVars(project).get(GitSCM.GIT_BRANCH_SHORT), build1);
+
+        assertEquals("master", getEnvVars(project).get(GitSCM.GIT_BRANCH_SONAR));
+        rule.assertLogContains(getEnvVars(project).get(GitSCM.GIT_BRANCH_SONAR), build1);
+
         final String commitFile2 = "commitFile2";
         commit(commitFile2, johnDoe, "Commit number 2");
         FreeStyleBuild build2 = build(project, Result.SUCCESS, commitFile2);
@@ -1407,12 +1413,12 @@ public class GitSCMTest extends AbstractGitTestCase {
             }
         });
     }
-    
+
     /**
-     * Verifies that if project specifies LocalBranch with value of "**" 
+     * Verifies that if project specifies LocalBranch with value of "**"
      * that the checkout to a local branch using remote branch name sans 'origin'.
      * This feature is necessary to support Maven release builds that push updated
-     * pom.xml to remote branch as 
+     * pom.xml to remote branch as
      * <br/>
      * <pre>
      * git push origin localbranch:localbranch
@@ -1434,10 +1440,10 @@ public class GitSCMTest extends AbstractGitTestCase {
     }
 
     /**
-     * Verifies that if project specifies LocalBranch with null value (empty string) 
+     * Verifies that if project specifies LocalBranch with null value (empty string)
      * that the checkout to a local branch using remote branch name sans 'origin'.
      * This feature is necessary to support Maven release builds that push updated
-     * pom.xml to remote branch as 
+     * pom.xml to remote branch as
      * <br/>
      * <pre>
      * git push origin localbranch:localbranch
@@ -1705,11 +1711,11 @@ public class GitSCMTest extends AbstractGitTestCase {
 
         // Initial commit to master
         commit("file1", johnDoe, "Initial Commit");
-        
+
         // Create the branches
         git.branch("trackedbranch");
         git.branch("manualbranch");
-        
+
         final StringParameterValue branchParam = new StringParameterValue("MY_BRANCH", "manualbranch");
         final Action[] actions = {new ParametersAction(branchParam)};
         FreeStyleBuild build = project.scheduleBuild2(0, new Cause.UserCause(), actions).get();
@@ -1724,9 +1730,9 @@ public class GitSCMTest extends AbstractGitTestCase {
         git.checkout("trackedbranch");
         commit("file3", johnDoe, "Commit to tracked branch");
         assertTrue("A change should be detected in tracked branch", project.poll(listener).hasChanges());
-        
+
     }
-    
+
     private final class FakeParametersAction implements EnvironmentContributingAction, Serializable {
         // Test class for testPolling_environmentValueAsEnvironmentContributingAction test case
         final ParametersAction m_forwardingAction;
@@ -1973,7 +1979,7 @@ public class GitSCMTest extends AbstractGitTestCase {
     }
 
     /* A null pointer exception was detected because the plugin failed to
-     * write a branch name to the build data, so there was a SHA1 recorded 
+     * write a branch name to the build data, so there was a SHA1 recorded
      * in the build data, but no branch name.
      */
     @Test
@@ -2042,7 +2048,7 @@ public class GitSCMTest extends AbstractGitTestCase {
 
        EnvVars env = new EnvVars();
        scm.buildEnvVars(build, env); // NPE here before fix applied
-       
+
        assertEquals("GIT_BRANCH", "origin/master", env.get("GIT_BRANCH"));
        assertEquals("GIT_LOCAL_BRANCH", "master", env.get("GIT_LOCAL_BRANCH"));
 
@@ -2083,7 +2089,7 @@ public class GitSCMTest extends AbstractGitTestCase {
 
        EnvVars env = new EnvVars();
        scm.buildEnvVars(build, env); // NPE here before fix applied
-       
+
        assertEquals("GIT_BRANCH", "origin/master", env.get("GIT_BRANCH"));
        assertEquals("GIT_LOCAL_BRANCH", "master", env.get("GIT_LOCAL_BRANCH"));
 
@@ -2123,7 +2129,7 @@ public class GitSCMTest extends AbstractGitTestCase {
 
        EnvVars env = new EnvVars();
        scm.buildEnvVars(build, env); // NPE here before fix applied
-       
+
        assertEquals("GIT_BRANCH", "origin/master", env.get("GIT_BRANCH"));
        assertEquals("GIT_LOCAL_BRANCH", null, env.get("GIT_LOCAL_BRANCH"));
 
@@ -2132,7 +2138,7 @@ public class GitSCMTest extends AbstractGitTestCase {
        verify(buildData, times(1)).hasBeenReferenced(anyString());
        verify(build, times(1)).getActions(BuildData.class);
     }
-    
+
     /**
      * Method performs HTTP get on "notifyCommit" URL, passing it commit by SHA1
      * and tests for build data consistency.
