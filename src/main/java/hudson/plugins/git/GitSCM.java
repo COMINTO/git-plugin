@@ -1105,6 +1105,8 @@ public class GitSCM extends GitSCMBackwardCompatibility {
         if (branch != null && branch.getName() != null) { // null for a detached HEAD
             String remoteBranchName = getBranchName(branch);
             environment.put(GIT_BRANCH, remoteBranchName);
+            environment.put(GIT_BRANCH_SHORT, getShortBranchName(branch));
+            environment.put(GIT_BRANCH_SONAR, getSonarBranchName(branch));
 
             LocalBranch lb = getExtensions().get(LocalBranch.class);
             if (lb != null) {
@@ -1113,9 +1115,6 @@ public class GitSCM extends GitSCMBackwardCompatibility {
                   localBranchName = deriveLocalBranchName(remoteBranchName);
                }
                environment.put(GIT_LOCAL_BRANCH, localBranchName);
-               environment.put(GIT_BRANCH_SHORT, getShortBranchName(branch));
-               environment.put(GIT_BRANCH_SONAR, getSonarBranchName(branch));
-
             }
         }
 
@@ -1236,6 +1235,8 @@ public class GitSCM extends GitSCMBackwardCompatibility {
             if (branch!=null && branch.getName()!=null) {
                String remoteBranchName = getBranchName(branch);
                 env.put(GIT_BRANCH, remoteBranchName);
+                env.put(GIT_BRANCH_SHORT, getShortBranchName(branch));
+                env.put(GIT_BRANCH_SONAR, getSonarBranchName(branch));
 
                 LocalBranch lb = getExtensions().get(LocalBranch.class);
                 if (lb != null) {
@@ -1246,9 +1247,6 @@ public class GitSCM extends GitSCMBackwardCompatibility {
                       localBranchName = deriveLocalBranchName(remoteBranchName);
                    }
                    env.put(GIT_LOCAL_BRANCH, localBranchName);
-                   env.put(GIT_BRANCH_SHORT, getShortBranchName(branch));
-                   env.put(GIT_BRANCH_SONAR, getSonarBranchName(branch));
-
                 }
 
                 String prevCommit = getLastBuiltCommitOfBranch(build, branch);
